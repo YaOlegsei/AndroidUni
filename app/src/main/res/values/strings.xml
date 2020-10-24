@@ -2,4 +2,5 @@
     <string name="app_name">MyUniApp</string>
     <string name="input_text_hint">Введите текст</string>
     <string name="press_on_me">Нажми на меня</string>
+    <string name="set_random_color">Выставить случайный свет</string>
 </resources>
