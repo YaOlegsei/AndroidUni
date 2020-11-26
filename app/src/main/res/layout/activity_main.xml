@@ -11,28 +11,37 @@
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/textInput"
         android:layout_width="0dp"
-        android:inputType="text"
-        android:hint="@string/input_text_hint"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="8dp"
+        android:hint="@string/input_text_hint"
+        android:inputType="text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="8dp"
         app:layout_goneMarginStart="8dp"
         />
 
     <Button
-        android:layout_marginTop="8dp"
         android:id="@+id/button"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"
         android:background="@color/colorPrimaryDark"
         android:text="@string/press_on_me"
-        app:layout_constraintTop_toBottomOf="@id/textInput"
-        app:layout_constraintStart_toStartOf="@id/textInput"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="@id/textInput"
+        app:layout_constraintStart_toStartOf="@id/textInput"
+        app:layout_constraintTop_toBottomOf="@id/textInput"
+        />
+
+    <include
+        layout="@layout/layout_recycler"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
