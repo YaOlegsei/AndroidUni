@@ -26,6 +26,9 @@
             android:name=".AnotherActivity"
             android:screenOrientation="portrait"
             />
+
+        <service android:name=".CalculateService"
+            />
     </application>
 
 </manifest>
