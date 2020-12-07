@@ -10,6 +10,8 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
 import android.os.Looper
+import android.os.Message
+import android.os.Messenger
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.layout_another_activity.*
@@ -17,11 +19,23 @@ import kotlin.random.Random
 
 class AnotherActivity : AppCompatActivity() {
 
-    private var calculateBinder: CalculateBinder? = null
+    private var calculateBinder: Messenger? = null
+
+    private val replyHandler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            Log.d(
+                "Thread",
+                "isMainThread:${Looper.myLooper()?.thread == Looper.getMainLooper().thread}"
+            )
+            output.text = msg.data.getString("calculationResult")
+        }
+    }
+
+    private val replyMessenger = Messenger(replyHandler)
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            calculateBinder = service as? CalculateBinder
+            calculateBinder = Messenger(service)
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -85,22 +99,12 @@ class AnotherActivity : AppCompatActivity() {
     private lateinit var backgroundHandler: Handler
 
     private fun calculate(first: Long, second: Long) {
-        val operation = operationSelector.selectedItem
-        backgroundHandler.post {
-            val result = when (operation) {
-                "*" -> first * second
-                "+" -> first + second
-                "-" -> first - second
-                "/" -> first / second
-                else -> null
-            }?.toString()
-
-            Log.d("Thread", "isMainThread:${Looper.myLooper()?.thread == Looper.getMainLooper().thread}")
-
-            output.handler.post {
-                output.text = result
-                Log.d("Thread", "isMainThread:${Looper.myLooper()?.thread == Looper.getMainLooper().thread}")
-            }
-        }
+        calculateBinder?.send(Message()
+            .apply {
+                replyTo = replyMessenger
+                data.putLong("first",first)
+                data.putLong("second",second)
+                data.putString("operation",operationSelector.selectedItem as? String)
+            })
     }
 }

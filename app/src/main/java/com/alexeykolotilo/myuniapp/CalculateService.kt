@@ -1,33 +1,55 @@
 package com.alexeykolotilo.myuniapp
 
-import android.app.IntentService
+import android.app.Service
 import android.content.Intent
+import android.os.Handler
+import android.os.HandlerThread
 import android.os.IBinder
-import androidx.core.app.JobIntentService
+import android.os.Looper
+import android.os.Message
+import android.os.Messenger
+import android.util.Log
 
-class CalculateService : JobIntentService(), CalculateBinder {
+class CalculateService : Service() {
 
-    override fun onBind(intent: Intent): IBinder? {
-        return super.onBind(intent)
+    private val handlerThread = HandlerThread("MyThread")
+
+    private val handler by lazy {
+        object : Handler(handlerThread.looper) {
+            override fun handleMessage(msg: Message) {
+                Log.d(
+                    "Thread",
+                    "isMainThread:${Looper.myLooper()?.thread == Looper.getMainLooper().thread}"
+                )
+                val first = msg.data.getLong("first")
+                val second = msg.data.getLong("second")
+                val operation = msg.data.getString("operation")
+
+                val result = when (operation) {
+                    "*" -> first * second
+                    "+" -> first + second
+                    "-" -> first - second
+                    "/" -> first / second
+                    else -> null
+                }?.toString()
+                msg.replyTo.send(Message().apply { data.putString("calculationResult", result) })
+            }
+        }
     }
 
-    override fun onHandleWork(intent: Intent) {
-        TODO("Not yet implemented")
+    private val messenger by lazy { Messenger(handler) }
+
+    override fun onBind(intent: Intent): IBinder {
+        return messenger.binder
     }
 
-    override fun handleOperation(operationType: OperationType, first: Long, second: Long) {
-        TODO("Not yet implemented")
+    override fun onCreate() {
+        super.onCreate()
+        handlerThread.start()
     }
 
-
-    enum class OperationType {
-        ADD,
-        MULTIPLY,
-        SUBTRACT,
-        DIVIDE,
+    override fun onDestroy() {
+        super.onDestroy()
+        handlerThread.quitSafely()
     }
-}
-
-interface CalculateBinder {
-    fun handleOperation(operationType: CalculateService.OperationType, first: Long, second: Long)
 }
