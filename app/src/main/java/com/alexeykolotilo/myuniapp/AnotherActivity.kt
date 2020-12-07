@@ -46,12 +46,12 @@ class AnotherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_another_activity)
+        handlerThread.start()
     }
 
     override fun onStart() {
         super.onStart()
         bindToService()
-        handlerThread.start()
 
         textView.text = intent?.extras?.getString("myText")
 
