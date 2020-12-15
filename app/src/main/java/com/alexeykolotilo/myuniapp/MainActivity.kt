@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
             onListChanged()
         }
         swap.setOnClickListener {
+            if (textFields.size < 2) return@setOnClickListener
             val first = textFields[textFields.lastIndex - 1]
             val second = textFields[textFields.lastIndex]
 
